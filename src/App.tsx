@@ -6,6 +6,7 @@ import { MusicSection } from './components/MusicSection';
 import { MemoryCinemaSection } from './components/MemoryCinemaSection';
 import { SubscribeSection } from './components/SubscribeSection';
 import { FooterSection } from './components/FooterSection';
+import { SocialSidebar } from './components/SocialSidebar';
 import { SiteProtection } from './components/SiteProtection';
 import { AdminPage } from './pages/AdminPage';
 import { trackPageView } from './utils/analytics';
@@ -51,6 +52,9 @@ export default function App() {
       <div className="relative w-full min-h-screen bg-[#121316] text-[#F2EEE8] selection:bg-[#FF2D85]/30 selection:text-[#F2EEE8]">
         {/* 01 HEADER */}
         <Header />
+
+        {/* FLOATING FIXED SOCIAL SIDEBAR */}
+        <SocialSidebar />
 
         {/* MAIN EXPERIENCE CONTAINER */}
         <main className="w-full flex flex-col">

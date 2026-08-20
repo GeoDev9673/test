@@ -72,12 +72,15 @@ export const SUBSCRIBE_DATA = {
   errorText: 'Something went wrong. Please try again.',
 };
 
+export const SOCIAL_LINKS = [
+  { name: 'Instagram', href: 'https://www.instagram.com/paralifeofficial/' },
+  { name: 'TikTok', href: 'https://www.tiktok.com/@paralifemusic' },
+  { name: 'YouTube', href: 'https://www.youtube.com/@Paralifemusic' },
+];
+
 export const FOOTER_DATA = {
   copyright: '© PARALIFE',
   links: [
-    { label: 'Instagram', href: 'https://www.instagram.com/paralifeofficial/' },
-    { label: 'TikTok', href: 'https://www.tiktok.com/@paralifemusic' },
-    { label: 'YouTube', href: 'https://www.youtube.com/@Paralifemusic' },
     { label: 'Contact', href: 'mailto:hello@paralifemusic.com' },
   ],
 };
