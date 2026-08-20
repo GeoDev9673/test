@@ -4,7 +4,7 @@ import { SOCIAL_LINKS } from '../data/paralifeData';
 export const SocialSidebar: React.FC = () => {
   return (
     <aside
-      className="fixed left-3 sm:left-5 md:left-8 top-1/2 -translate-y-1/2 z-40 flex flex-col space-y-2.5 sm:space-y-3.5"
+      className="fixed left-3 sm:left-5 md:left-8 top-1/2 -translate-y-1/2 z-40 flex flex-col space-y-3 sm:space-y-4"
       aria-label="Social media links"
     >
       {SOCIAL_LINKS.map((item) => (
@@ -14,11 +14,11 @@ export const SocialSidebar: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`Visit PARALIFE on ${item.name}`}
-          className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center bg-[#121316]/80 hover:bg-[#121316] text-[#F2EEE8]/70 hover:text-[#FF2D85] border border-[#F2EEE8]/15 hover:border-[#FF2D85]/80 backdrop-blur-md transition-all duration-200 rounded-none shadow-xl hover:shadow-[0_0_12px_rgba(255,45,133,0.35)] group"
+          className="text-[#FF2D85] hover:text-[#FF65B2] active:text-white transition-all duration-200 p-1.5 sm:p-2 flex items-center justify-center hover:scale-115 drop-shadow-[0_0_6px_rgba(255,45,133,0.4)] hover:drop-shadow-[0_0_12px_rgba(255,45,133,0.85)] group"
         >
           {item.name === 'Instagram' && (
             <svg
-              className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-none stroke-current stroke-2 transition-transform duration-200 group-hover:scale-110"
+              className="w-5 h-5 sm:w-5.5 sm:h-5.5 md:w-6 md:h-6 fill-none stroke-current stroke-[1.8]"
               viewBox="0 0 24 24"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -31,7 +31,7 @@ export const SocialSidebar: React.FC = () => {
 
           {item.name === 'TikTok' && (
             <svg
-              className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current transition-transform duration-200 group-hover:scale-110"
+              className="w-5 h-5 sm:w-5.5 sm:h-5.5 md:w-6 md:h-6 fill-current"
               viewBox="0 0 24 24"
             >
               <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.29 0 .58.04.85.12V9.32a6.34 6.34 0 0 0-.85-.06A6.33 6.33 0 0 0 3 15.59a6.33 6.33 0 0 0 10.79 4.51c1.8-1.57 2.08-4.22 2.08-4.51V8.69a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.05-.12z" />
@@ -40,7 +40,7 @@ export const SocialSidebar: React.FC = () => {
 
           {item.name === 'YouTube' && (
             <svg
-              className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-none stroke-current stroke-2 transition-transform duration-200 group-hover:scale-110"
+              className="w-5 h-5 sm:w-5.5 sm:h-5.5 md:w-6 md:h-6 fill-none stroke-current stroke-[1.8]"
               viewBox="0 0 24 24"
               strokeLinecap="round"
               strokeLinejoin="round"
