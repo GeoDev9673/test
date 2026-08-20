@@ -137,6 +137,15 @@ export const getAnalyticsSummary = async (daysRange = 14): Promise<AnalyticsSumm
     } catch (e) {
       console.warn('[Fetch Subscribers Warn]:', e);
     }
+  } else {
+    // Local VPS Server API
+    try {
+      const response = await fetch('/api/subscribers');
+      if (response.ok) {
+        const json = await response.json();
+        subscribers = json.subscribers || [];
+      }
+    } catch (e) {}
   }
 
   // 2. Read unique devices list

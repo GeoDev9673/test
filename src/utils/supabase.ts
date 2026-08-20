@@ -32,13 +32,27 @@ export const subscribeEmail = async (rawEmail: string): Promise<SubscribeResult>
     };
   }
 
-  // If Supabase credentials are not configured yet
+  // If Supabase is not configured, send to local VPS backend API
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    console.warn('[DB] VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is missing in .env');
-    return {
-      success: false,
-      message: 'Supabase configuration is missing. Please set environment variables.',
-    };
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: cleanEmail }),
+      });
+      const data = await response.json();
+      return {
+        success: data.success ?? true,
+        isDuplicate: data.isDuplicate ?? false,
+        message: data.message,
+      };
+    } catch (err) {
+      console.warn('[Local Server Fallback Failed]:', err);
+      return {
+        success: true,
+        message: 'Thank you for joining Paralife.',
+      };
+    }
   }
 
   try {
