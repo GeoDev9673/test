@@ -1,0 +1,6 @@
+{
+  "name": "PARALIFE",
+  "description": "A cinematic digital museum of memories for PARALIFE — an independent cinematic music project.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
