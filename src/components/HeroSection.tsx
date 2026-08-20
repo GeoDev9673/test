@@ -7,17 +7,19 @@ import { HERO_DATA } from '../data/paralifeData';
 
 export const HeroSection: React.FC = () => {
   const [isSoundOn, setIsSoundOn] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.innerWidth <= 768 : false
+  );
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile((prev) => (prev !== mobile ? mobile : prev));
     };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
@@ -25,14 +27,6 @@ export const HeroSection: React.FC = () => {
       videoRef.current.muted = !isSoundOn;
     }
   }, [isSoundOn]);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      setIsVideoLoaded(false);
-      videoRef.current.load();
-      videoRef.current.play().catch(() => {});
-    }
-  }, [isMobile]);
 
   const toggleSound = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
@@ -48,16 +42,18 @@ export const HeroSection: React.FC = () => {
     }
   };
 
+  const currentVideoSrc = isMobile ? heroMobileVideoMp4 : heroVideoMp4;
+
   return (
     <section
       id="hero"
       className="relative h-[100svh] min-h-[500px] w-full flex items-end justify-center overflow-hidden bg-[#121316] pb-20 sm:pb-24 md:pb-12 lg:pb-14"
       aria-label="Hero"
     >
-      {/* Background Video with hardware-accelerated MP4 primary and WebM fallback */}
+      {/* Background Video with hardware-accelerated MP4 */}
       <video
         ref={videoRef}
-        key={isMobile ? 'mobile' : 'desktop'}
+        src={currentVideoSrc}
         autoPlay
         loop
         muted
@@ -67,26 +63,17 @@ export const HeroSection: React.FC = () => {
         disablePictureInPicture
         onPlaying={() => setIsVideoLoaded(true)}
         onLoadedData={() => setIsVideoLoaded(true)}
-        onEnded={() => {
-          if (videoRef.current) {
-            videoRef.current.currentTime = 0;
-            videoRef.current.play().catch(() => {});
-          }
-        }}
+        onCanPlay={() => setIsVideoLoaded(true)}
         onContextMenu={(e) => e.preventDefault()}
+        style={{
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+        }}
         className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-500 ease-out ${
           isVideoLoaded ? 'opacity-100' : 'opacity-0'
         }`}
-      >
-        <source
-          src={isMobile ? heroMobileVideoMp4 : heroVideoMp4}
-          type="video/mp4"
-        />
-        <source
-          src={isMobile ? heroMobileVideoWebm : heroVideoWebm}
-          type="video/webm"
-        />
-      </video>
+      />
 
       {/* Dark Cinematic Vignette & Gradient Overlay */}
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#121316] via-black/25 to-[#121316]/50 pointer-events-none" />
