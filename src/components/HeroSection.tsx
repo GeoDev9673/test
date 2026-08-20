@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import heroVideoWebm from '../assets/videos/hero-section.webm';
 import heroVideoMp4 from '../assets/videos/hero-section.mp4';
-import heroMobileVideoWebm from '../assets/videos/hero-section-mobile.webm';
 import heroMobileVideoMp4 from '../assets/videos/hero-section-mobile.mp4';
 import { HERO_DATA } from '../data/paralifeData';
 
