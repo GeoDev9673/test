@@ -35,7 +35,6 @@ export const HERO_DATA = {
 export const ABOUT_DATA = {
   sectionLabel: 'ABOUT',
   headline: 'A cinematic world where music, memory and visual storytelling become one experience.',
-  body: 'PARALIFE combines music, film language and editorial design into one digital experience.',
 };
 
 export const MUSIC_DATA = {

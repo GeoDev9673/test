@@ -18,11 +18,6 @@ export const AboutSection: React.FC = () => {
         <h2 className="text-[28px] sm:text-[38px] md:text-[48px] lg:text-[56px] text-[#F2EEE8] font-normal leading-[1.12] sm:leading-[1.08] max-w-[780px] tracking-[-0.01em]">
           {ABOUT_DATA.headline}
         </h2>
-
-        {/* Body Text */}
-        <p className="text-[15px] sm:text-[17px] md:text-[19px] text-[#F2EEE8]/76 max-w-[640px] font-normal leading-[1.6] sm:leading-[1.55]">
-          {ABOUT_DATA.body}
-        </p>
       </div>
     </section>
   );
