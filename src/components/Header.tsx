@@ -41,14 +41,14 @@ export const Header: React.FC = () => {
   return (
     <header
       style={{ position: 'absolute', top: 0, left: 0, right: 0 }}
-      className={`absolute top-0 left-0 right-0 z-50 transition-all duration-300 py-4 sm:py-5 md:py-6 px-4 sm:px-6 md:px-12 ${
+      className={`absolute top-0 left-0 right-0 z-50 transition-all duration-300 py-4 sm:py-5 md:py-6 px-4 sm:px-6 md:px-10 lg:px-14 ${
         mobileMenuOpen
           ? 'bg-[#121316]/95 backdrop-blur-md border-b border-[#F2EEE8]/10'
           : 'bg-transparent'
       }`}
       aria-label="Primary navigation"
     >
-      <div className="max-w-[1440px] mx-auto flex items-center justify-between">
+      <div className="w-full flex items-center justify-between">
         {/* PARALIFE Logo */}
         <a
           href="#hero"
