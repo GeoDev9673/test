@@ -48,7 +48,7 @@ export default function App() {
   // Regular Public Website (100% clean, zero admin elements)
   return (
     <SiteProtection>
-      <div className="w-full min-h-screen bg-[#121316] text-[#F2EEE8] selection:bg-[#FF2D85]/30 selection:text-[#F2EEE8]">
+      <div className="relative w-full min-h-screen bg-[#121316] text-[#F2EEE8] selection:bg-[#FF2D85]/30 selection:text-[#F2EEE8]">
         {/* 01 HEADER */}
         <Header />
 

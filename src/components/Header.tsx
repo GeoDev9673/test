@@ -3,20 +3,7 @@ import { NAV_ITEMS, PARALIFE_META } from '../data/paralifeData';
 import logoImg from '../assets/images/logo.png';
 
 export const Header: React.FC = () => {
-  const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -53,8 +40,9 @@ export const Header: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 sm:py-5 md:py-6 px-4 sm:px-6 md:px-12 ${
-        scrolled || mobileMenuOpen
+      style={{ position: 'absolute', top: 0, left: 0, right: 0 }}
+      className={`absolute top-0 left-0 right-0 z-50 transition-all duration-300 py-4 sm:py-5 md:py-6 px-4 sm:px-6 md:px-12 ${
+        mobileMenuOpen
           ? 'bg-[#121316]/95 backdrop-blur-md border-b border-[#F2EEE8]/10'
           : 'bg-transparent'
       }`}
