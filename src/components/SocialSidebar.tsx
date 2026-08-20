@@ -14,7 +14,7 @@ export const SocialSidebar: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`Visit PARALIFE on ${item.name}`}
-          className="text-[#FF2D85] hover:text-[#FF65B2] active:text-white transition-all duration-200 p-1.5 sm:p-2 flex items-center justify-center hover:scale-115 drop-shadow-[0_0_6px_rgba(255,45,133,0.4)] hover:drop-shadow-[0_0_12px_rgba(255,45,133,0.85)] group"
+          className="text-[#F2EEE8]/80 hover:text-[#FF2D85] active:text-[#FF2D85] transition-all duration-200 p-1.5 sm:p-2 flex items-center justify-center hover:scale-110 hover:drop-shadow-[0_0_8px_#FF2D85] group"
         >
           {item.name === 'Instagram' && (
             <svg
