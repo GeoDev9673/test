@@ -8,7 +8,6 @@ export const HeroSection: React.FC = () => {
   const [isMobile, setIsMobile] = useState<boolean>(() =>
     typeof window !== 'undefined' ? window.innerWidth <= 768 : false
   );
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -20,11 +19,14 @@ export const HeroSection: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Guarantee immediate instant autoplay on initial load
   useEffect(() => {
     if (videoRef.current) {
+      videoRef.current.defaultMuted = true;
       videoRef.current.muted = !isSoundOn;
+      videoRef.current.play().catch(() => {});
     }
-  }, [isSoundOn]);
+  }, [isMobile, isSoundOn]);
 
   const toggleSound = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
@@ -48,10 +50,11 @@ export const HeroSection: React.FC = () => {
       className="relative h-[100svh] min-h-[500px] w-full flex items-end justify-center overflow-hidden bg-[#121316] pb-20 sm:pb-24 md:pb-12 lg:pb-14"
       aria-label="Hero"
     >
-      {/* Background Video with hardware-accelerated MP4 */}
+      {/* Background Video with instant autoplay and hardware acceleration */}
       <video
         ref={videoRef}
         src={currentVideoSrc}
+        poster={HERO_DATA.posterImage}
         autoPlay
         loop
         muted
@@ -59,18 +62,13 @@ export const HeroSection: React.FC = () => {
         preload="auto"
         controlsList="nodownload no-remote-playback"
         disablePictureInPicture
-        onPlaying={() => setIsVideoLoaded(true)}
-        onLoadedData={() => setIsVideoLoaded(true)}
-        onCanPlay={() => setIsVideoLoaded(true)}
         onContextMenu={(e) => e.preventDefault()}
         style={{
           transform: 'translateZ(0)',
           backfaceVisibility: 'hidden',
           WebkitBackfaceVisibility: 'hidden',
         }}
-        className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-500 ease-out ${
-          isVideoLoaded ? 'opacity-100' : 'opacity-0'
-        }`}
+        className="absolute inset-0 w-full h-full object-cover z-0 opacity-100"
       />
 
       {/* Dark Cinematic Vignette & Gradient Overlay */}
