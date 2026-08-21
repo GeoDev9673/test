@@ -20,15 +20,12 @@ export const MemoryCinemaSection: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16 items-start">
           {/* Cinematic Image */}
           <div className="lg:col-span-7 xl:col-span-8 w-full overflow-hidden rounded-sm">
-            <picture>
-              <source media="(max-width: 768px)" srcSet={MEMORY_CINEMA_DATA.mobileImage} />
-              <img
-                src={MEMORY_CINEMA_DATA.image}
-                alt={MEMORY_CINEMA_DATA.altText}
-                referrerPolicy="no-referrer"
-                className="w-full h-auto object-cover brightness-95 contrast-105 hover:brightness-105 transition-all duration-700"
-              />
-            </picture>
+            <img
+              src={MEMORY_CINEMA_DATA.image}
+              alt={MEMORY_CINEMA_DATA.altText}
+              referrerPolicy="no-referrer"
+              className="w-full h-auto object-cover brightness-95 contrast-105 hover:brightness-105 transition-all duration-700"
+            />
           </div>
 
           {/* Supporting Text Block */}

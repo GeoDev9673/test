@@ -1,6 +1,5 @@
 import heroPosterImg from '../assets/images/hero_poster_1785348901613.jpg';
-import memoryCinemaImg from '../assets/images/memory_cinema_pc.jpg';
-import memoryCinemaMobileImg from '../assets/images/memory_cinema_mobile.png';
+import memoryCinemaImg from '../assets/images/memory_cinema_mobile.png';
 
 import { NavItem } from '../types';
 
@@ -55,7 +54,6 @@ export const MUSIC_DATA = {
 export const MEMORY_CINEMA_DATA = {
   sectionLabel: 'MEMORY CINEMA',
   image: memoryCinemaImg,
-  mobileImage: memoryCinemaMobileImg,
   altText: 'Memory Cinema building with illuminated marquee.',
   headline: 'Some places remember us long before we remember them.',
   body: 'Memory Cinema is the symbolic place where music, stories and memory quietly intersect.',
