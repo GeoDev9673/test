@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import heroVideoMp4 from '../assets/videos/hero-section.mp4';
-import heroVideoWebm from '../assets/videos/hero-section.webm';
 import heroMobileVideoMp4 from '../assets/videos/hero-section-mobile.mp4';
-import heroMobileVideoWebm from '../assets/videos/hero-section-mobile.webm';
 import { HERO_DATA } from '../data/paralifeData';
 
 export const HeroSection: React.FC = () => {
@@ -12,7 +10,6 @@ export const HeroSection: React.FC = () => {
   );
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Smooth responsive check
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
@@ -22,7 +19,6 @@ export const HeroSection: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Reliable, high-performance video autoplay & visibility management
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
@@ -34,17 +30,6 @@ export const HeroSection: React.FC = () => {
     if (playPromise !== undefined) {
       playPromise.catch(() => {});
     }
-
-    const handleVisibility = () => {
-      if (document.visibilityState === 'visible' && v.paused) {
-        v.play().catch(() => {});
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibility);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibility);
-    };
   }, [isMobile]);
 
   const toggleSound = (e: React.MouseEvent | React.TouchEvent) => {
@@ -61,8 +46,7 @@ export const HeroSection: React.FC = () => {
     }
   };
 
-  const webmSrc = isMobile ? heroMobileVideoWebm : heroVideoWebm;
-  const mp4Src = isMobile ? heroMobileVideoMp4 : heroVideoMp4;
+  const currentVideoSrc = isMobile ? heroMobileVideoMp4 : heroVideoMp4;
 
   return (
     <section
@@ -71,10 +55,11 @@ export const HeroSection: React.FC = () => {
       style={{ contain: 'paint' }}
       aria-label="Hero"
     >
-      {/* Background Video with dedicated hardware acceleration */}
+      {/* Background Video directly with raw original video file */}
       <video
         key={isMobile ? 'mobile-video' : 'desktop-video'}
         ref={videoRef}
+        src={currentVideoSrc}
         autoPlay
         loop
         muted
@@ -89,10 +74,7 @@ export const HeroSection: React.FC = () => {
           willChange: 'transform',
         }}
         className="absolute inset-0 w-full h-full object-cover z-0 opacity-100 pointer-events-none"
-      >
-        <source src={webmSrc} type="video/webm" />
-        <source src={mp4Src} type="video/mp4" />
-      </video>
+      />
 
       {/* Dark Cinematic Vignette & Gradient Overlay */}
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#121316] via-black/25 to-[#121316]/50 pointer-events-none" />
