@@ -1,4 +1,5 @@
-import heroPosterImg from '../assets/images/hero_poster_1785348901613.jpg';
+import heroPosterImg from '../assets/images/hero_poster.jpg';
+import heroPosterMobileImg from '../assets/images/hero_poster_mobile.jpg';
 import memoryCinemaImg from '../assets/images/memory_cinema_mobile.png';
 
 import { NavItem } from '../types';
@@ -28,6 +29,7 @@ export const NAV_ITEMS: NavItem[] = [
 
 export const HERO_DATA = {
   posterImage: heroPosterImg,
+  posterMobileImage: heroPosterMobileImg,
   altText: 'PARALIFE cinematic video.',
   tagline: 'Less Noise. More Life.',
 };
