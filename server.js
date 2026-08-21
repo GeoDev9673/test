@@ -168,6 +168,21 @@ app.get('/api/subscribers', (req, res) => {
   });
 });
 
+// 2.1 Delete Subscriber (Admin)
+app.delete('/api/subscribers/:id', (req, res) => {
+  const { id } = req.params;
+  let subscribers = getSubscribers();
+  const initialLength = subscribers.length;
+  subscribers = subscribers.filter((s) => s.id !== id && s.email !== id);
+
+  if (subscribers.length === initialLength) {
+    return res.status(404).json({ success: false, message: 'Subscriber not found.' });
+  }
+
+  saveSubscribers(subscribers);
+  return res.json({ success: true, message: 'Subscriber deleted successfully.' });
+});
+
 // 3. Export CSV endpoint
 app.get('/api/export-csv', (req, res) => {
   const subscribers = getSubscribers();

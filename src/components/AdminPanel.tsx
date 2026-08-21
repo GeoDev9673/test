@@ -48,6 +48,34 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     document.body.removeChild(link);
   };
 
+  const handleDeleteSubscriber = async (id: string, email: string) => {
+    if (!window.confirm(`Удалить подписчика ${email}?`)) return;
+
+    try {
+      // 1. Send delete request to VPS API
+      await fetch(`/api/subscribers/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+      }).catch(() => {});
+
+      // 2. Optimistically update local state
+      setData((prev) => {
+        if (!prev) return prev;
+        const filtered = prev.subscribers.filter((s) => s.id !== id && s.email !== email);
+        return {
+          ...prev,
+          totalSubscribers: filtered.length,
+          subscribers: filtered,
+          conversionRate:
+            prev.uniqueVisitors > 0
+              ? Number(((filtered.length / prev.uniqueVisitors) * 100).toFixed(1))
+              : 0,
+        };
+      });
+    } catch (err) {
+      console.error('Delete subscriber error:', err);
+    }
+  };
+
   // SVG Chart Dimensions
   const chartWidth = 840;
   const chartHeight = 240;
@@ -410,13 +438,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                         <th className="py-3 px-4 font-normal">Email Address</th>
                         <th className="py-3 px-4 font-normal">Timestamp</th>
                         <th className="py-3 px-4 font-normal">Status</th>
+                        <th className="py-3 px-4 font-normal text-right">Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {data?.subscribers.map((sub, idx) => (
                         <tr
                           key={sub.id || idx}
-                          className="border-b border-[#F2EEE8]/6 hover:bg-[#18191f] transition-colors"
+                          className="border-b border-[#F2EEE8]/6 hover:bg-[#18191f] transition-colors group"
                         >
                           <td className="py-3.5 px-4 text-[#F2EEE8]/40 font-mono">{idx + 1}</td>
                           <td className="py-3.5 px-4 text-[#F2EEE8] font-medium">{sub.email}</td>
@@ -427,6 +456,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                             <span className="text-[11px] tracking-[0.1em] text-[#00FF88] uppercase font-medium">
                               +{sub.status || 'active'}
                             </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteSubscriber(sub.id, sub.email)}
+                              className="text-[11px] tracking-[0.08em] uppercase text-[#F2EEE8]/40 hover:text-[#FF4D88] active:text-[#FF4D88] transition-colors cursor-pointer py-1 px-2.5 hover:bg-[#FF4D88]/10 rounded-sm font-medium"
+                              title="Удалить подписчика"
+                            >
+                              ✕ delete
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -439,13 +478,22 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   {data?.subscribers.map((sub, idx) => (
                     <div
                       key={sub.id || idx}
-                      className="bg-[#16171d] border border-[#F2EEE8]/10 p-4 rounded-sm flex flex-col space-y-2"
+                      className="bg-[#16171d] border border-[#F2EEE8]/10 p-4 rounded-sm flex flex-col space-y-2.5"
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-[11px] text-[#F2EEE8]/40 font-mono">#{idx + 1}</span>
-                        <span className="text-[10px] tracking-[0.1em] text-[#00FF88] uppercase font-medium bg-[#00FF88]/10 px-2 py-0.5 rounded-sm">
-                          +{sub.status || 'active'}
-                        </span>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-[10px] tracking-[0.1em] text-[#00FF88] uppercase font-medium bg-[#00FF88]/10 px-2 py-0.5 rounded-sm">
+                            +{sub.status || 'active'}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteSubscriber(sub.id, sub.email)}
+                            className="text-[10px] tracking-[0.08em] uppercase text-[#FF4D88] hover:text-[#ff1275] bg-[#FF4D88]/10 hover:bg-[#FF4D88]/20 px-2 py-0.5 rounded-sm font-medium transition-colors"
+                          >
+                            ✕ delete
+                          </button>
+                        </div>
                       </div>
                       <span className="text-[14px] text-[#F2EEE8] font-medium break-all select-all">
                         {sub.email}
