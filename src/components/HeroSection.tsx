@@ -54,7 +54,6 @@ export const HeroSection: React.FC = () => {
       <video
         ref={videoRef}
         src={currentVideoSrc}
-        poster={HERO_DATA.posterImage}
         autoPlay
         loop
         muted
