@@ -179,19 +179,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
             +analytics
           </button>
           
-          <button
-            onClick={() => setActiveTab('subscribers')}
-            className={`text-[12px] sm:text-[13px] tracking-[0.12em] uppercase transition-colors cursor-pointer font-semibold py-1 border-b-2 flex items-center space-x-2 ${
-              activeTab === 'subscribers' ? 'text-[#FF2D85] border-[#FF2D85]' : 'text-[#F2EEE8]/52 hover:text-[#F2EEE8] border-transparent'
-            }`}
-          >
-            <span>+subscribers</span>
-            {data && data.totalSubscribers > 0 && (
-              <span className="text-[10px] bg-[#FF2D85] text-white px-1.5 py-0.2 rounded-full font-mono font-bold">
-                {data.totalSubscribers}
-              </span>
-            )}
-          </button>
+            <button
+              onClick={() => setActiveTab('subscribers')}
+              className={`text-[12px] sm:text-[13px] tracking-[0.12em] uppercase transition-colors cursor-pointer font-semibold py-1 border-b-2 flex items-center space-x-2 ${
+                activeTab === 'subscribers' ? 'text-[#FF2D85] border-[#FF2D85]' : 'text-[#F2EEE8]/52 hover:text-[#F2EEE8] border-transparent'
+              }`}
+            >
+              <span>+subscribers</span>
+              {data && data.totalSubscribers > 0 && (
+                <span className="min-w-[19px] h-[19px] px-1.5 rounded-full bg-[#FF2D85] text-white text-[10px] font-bold font-mono inline-flex items-center justify-center text-center leading-none shadow-sm shadow-[#FF2D85]/30">
+                  {data.totalSubscribers}
+                </span>
+              )}
+            </button>
         </div>
 
         {/* TAB 1: OVERVIEW & CHARTS */}
