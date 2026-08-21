@@ -26,9 +26,6 @@ const STORAGE_KEY_DEVICES_STRICT = 'paralife_strict_unique_devices_v4';
 const STORAGE_KEY_DEVICE_LOGGED = 'paralife_device_logged_v4';
 const STORAGE_KEY_SINGLE_VISITOR_ID = 'paralife_single_device_id_v4';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
 /**
  * Clean legacy dirty storage keys to prevent duplicate counts
  */
@@ -88,23 +85,15 @@ export const trackPageView = async (): Promise<void> => {
     localStorage.setItem(STORAGE_KEY_DEVICES_STRICT, JSON.stringify([record]));
     localStorage.setItem(STORAGE_KEY_DEVICE_LOGGED, 'true');
 
-    // Async push to Supabase if configured
-    if (SUPABASE_URL && SUPABASE_ANON_KEY) {
-      const baseUrl = SUPABASE_URL.replace(/\/rest\/v1\/?$/, '').replace(/\/$/, '');
-      fetch(`${baseUrl}/rest/v1/page_views`, {
-        method: 'POST',
-        headers: {
-          apikey: SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-          Prefer: 'return=minimal',
-        },
-        body: JSON.stringify({
-          visitor_id: visitorId,
-          created_at: now.toISOString(),
-        }),
-      }).catch(() => {});
-    }
+    // Push visit to self-hosted VPS backend API
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        visitor_id: visitorId,
+        created_at: now.toISOString(),
+      }),
+    }).catch(() => {});
   } catch (err) {
     console.warn('[Analytics Track Error]:', err);
   }
@@ -116,36 +105,16 @@ export const trackPageView = async (): Promise<void> => {
 export const getAnalyticsSummary = async (daysRange = 14): Promise<AnalyticsSummary> => {
   cleanupLegacyKeys();
 
-  // 1. Fetch real subscribers from Supabase
+  // 1. Fetch real subscribers from self-hosted VPS API
   let subscribers: SubscriberRecord[] = [];
-  if (SUPABASE_URL && SUPABASE_ANON_KEY) {
-    try {
-      const baseUrl = SUPABASE_URL.replace(/\/rest\/v1\/?$/, '').replace(/\/$/, '');
-      const response = await fetch(
-        `${baseUrl}/rest/v1/subscribers?select=id,email,created_at,status&order=created_at.desc`,
-        {
-          method: 'GET',
-          headers: {
-            apikey: SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-          },
-        }
-      );
-      if (response.ok) {
-        subscribers = await response.json();
-      }
-    } catch (e) {
-      console.warn('[Fetch Subscribers Warn]:', e);
+  try {
+    const response = await fetch('/api/subscribers');
+    if (response.ok) {
+      const json = await response.json();
+      subscribers = json.subscribers || [];
     }
-  } else {
-    // Local VPS Server API
-    try {
-      const response = await fetch('/api/subscribers');
-      if (response.ok) {
-        const json = await response.json();
-        subscribers = json.subscribers || [];
-      }
-    } catch (e) {}
+  } catch (e) {
+    console.warn('[Fetch Subscribers Warn]:', e);
   }
 
   // 2. Read unique devices list

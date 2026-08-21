@@ -32,8 +32,6 @@ jobs:
 
       - name: Build project with environment variables
         env:
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://yvscmrxihtmoxkjsceyf.supabase.co' }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           VITE_BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
           VITE_BREVO_LIST_ID: '6'
           VITE_BREVO_TEMPLATE_ID: '4'

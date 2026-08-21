@@ -81,10 +81,25 @@ const saveAnalytics = (list) => {
 
 // Brevo Welcome Email integration helper
 const sendBrevoWelcomeEmail = async (email) => {
-  const BREVO_API_KEY = process.env.VITE_BREVO_API_KEY || process.env.BREVO_API_KEY;
+  const BREVO_API_KEY = process.env.BREVO_API_KEY || process.env.VITE_BREVO_API_KEY || '';
   if (!BREVO_API_KEY) return;
 
   try {
+    // 1. Sync contact into Brevo List #6
+    await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'api-key': BREVO_API_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+        listIds: [6],
+        updateEnabled: true,
+      }),
+    }).catch((e) => console.warn('[Brevo Contact Sync Warn]:', e.message));
+
+    // 2. Send Styled Welcome Template #4
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
@@ -92,17 +107,8 @@ const sendBrevoWelcomeEmail = async (email) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        sender: { name: 'PARALIFE', email: 'hello@paralifemusic.com' },
+        templateId: 4,
         to: [{ email }],
-        subject: 'Welcome to PARALIFE',
-        htmlContent: `
-          <div style="background-color:#121316;color:#F2EEE8;padding:40px;font-family:sans-serif;text-align:center;">
-            <h1 style="color:#F2EEE8;letter-spacing:0.1em;text-transform:uppercase;font-size:24px;">PARALIFE</h1>
-            <p style="color:#FF2D85;letter-spacing:0.15em;text-transform:uppercase;font-size:12px;margin-bottom:30px;">+SIGNAL ESTABLISHED</p>
-            <p style="color:rgba(242,238,232,0.8);line-height:1.6;max-width:500px;margin:0 auto 30px;">You are now following the signal. Welcome to the cinematic digital experience.</p>
-            <p style="color:rgba(242,238,232,0.4);font-size:11px;">PARALIFE • Less Noise. More Life.</p>
-          </div>
-        `,
       }),
     });
     console.log('[Brevo Email Dispatch Status]:', response.status);
