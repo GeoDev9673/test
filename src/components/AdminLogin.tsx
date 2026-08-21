@@ -65,7 +65,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess, onCancel }) =
                 if (error) setError(false);
               }}
               placeholder="ENTER ACCESS KEY"
-              className="w-full bg-transparent py-3.5 sm:py-4 text-center text-[16px] text-[#F2EEE8] placeholder-[#F2EEE8]/30 focus:outline-none tracking-[0.14em] sm:tracking-[0.18em] uppercase"
+              className="w-full bg-transparent py-3.5 sm:py-4 text-center text-[16px] text-[#F2EEE8] placeholder-[#F2EEE8]/30 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 border-none shadow-none tracking-[0.14em] sm:tracking-[0.18em] uppercase"
             />
           </div>
 

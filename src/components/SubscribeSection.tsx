@@ -64,7 +64,7 @@ export const SubscribeSection: React.FC = () => {
                 }}
                 placeholder={SUBSCRIBE_DATA.inputPlaceholder}
                 disabled={status === 'loading'}
-                className="w-full bg-transparent py-4 text-[16px] text-[#F2EEE8] placeholder-[#F2EEE8]/40 focus:outline-none tracking-[0.02em]"
+                className="w-full bg-transparent py-4 text-[16px] text-[#F2EEE8] placeholder-[#F2EEE8]/40 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 border-none shadow-none tracking-[0.02em]"
                 required
                 aria-label="Email address"
               />
