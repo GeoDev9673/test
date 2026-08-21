@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import heroVideoMp4 from '../assets/videos/hero-section.mp4';
+import heroVideoWebm from '../assets/videos/hero-section.webm';
 import heroMobileVideoMp4 from '../assets/videos/hero-section-mobile.mp4';
+import heroMobileVideoWebm from '../assets/videos/hero-section-mobile.webm';
 import { HERO_DATA } from '../data/paralifeData';
 
 export const HeroSection: React.FC = () => {
@@ -10,6 +12,7 @@ export const HeroSection: React.FC = () => {
   );
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Smooth responsive check
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
@@ -19,76 +22,47 @@ export const HeroSection: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Continuous smooth playback & scroll intersection observer
+  // Reliable, high-performance video autoplay & visibility management
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
 
-    const playVideo = () => {
-      if (v.paused) {
-        v.defaultMuted = true;
-        v.muted = !isSoundOn;
-        const p = v.play();
-        if (p !== undefined) {
-          p.catch(() => {});
-        }
+    v.defaultMuted = true;
+    v.muted = !isSoundOn;
+
+    const playPromise = v.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {});
+    }
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible' && v.paused) {
+        v.play().catch(() => {});
       }
     };
 
-    // Immediate play
-    playVideo();
-
-    // Auto-resume if mobile browser tries to freeze video on scroll
-    const handlePause = () => {
-      if (document.visibilityState === 'visible' && !v.ended) {
-        playVideo();
-      }
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        playVideo();
-      }
-    };
-
-    // IntersectionObserver to keep video active and resume instantly on scroll
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            playVideo();
-          }
-        });
-      },
-      { threshold: 0.01 }
-    );
-
-    observer.observe(v);
-    v.addEventListener('pause', handlePause);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
+    document.addEventListener('visibilitychange', handleVisibility);
     return () => {
-      v.removeEventListener('pause', handlePause);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      observer.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
-  }, [isMobile, isSoundOn]);
+  }, [isMobile]);
 
   const toggleSound = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (videoRef.current) {
-      const nextMutedState = !videoRef.current.muted;
-      videoRef.current.muted = nextMutedState;
-      setIsSoundOn(!nextMutedState);
-
-      if (!nextMutedState) {
-        videoRef.current.play().catch(() => {});
+    const v = videoRef.current;
+    if (v) {
+      const nextMuted = !v.muted;
+      v.muted = nextMuted;
+      setIsSoundOn(!nextMuted);
+      if (!nextMuted && v.paused) {
+        v.play().catch(() => {});
       }
     }
   };
 
-  const currentVideoSrc = isMobile ? heroMobileVideoMp4 : heroVideoMp4;
+  const webmSrc = isMobile ? heroMobileVideoWebm : heroVideoWebm;
+  const mp4Src = isMobile ? heroMobileVideoMp4 : heroVideoMp4;
 
   return (
     <section
@@ -97,10 +71,10 @@ export const HeroSection: React.FC = () => {
       style={{ contain: 'paint' }}
       aria-label="Hero"
     >
-      {/* Background Video with continuous smooth autoplay and dedicated GPU layer */}
+      {/* Background Video with dedicated hardware acceleration */}
       <video
+        key={isMobile ? 'mobile-video' : 'desktop-video'}
         ref={videoRef}
-        src={currentVideoSrc}
         autoPlay
         loop
         muted
@@ -108,22 +82,17 @@ export const HeroSection: React.FC = () => {
         preload="auto"
         controlsList="nodownload no-remote-playback"
         disablePictureInPicture
-        onCanPlay={(e) => {
-          if (e.currentTarget.paused) e.currentTarget.play().catch(() => {});
-        }}
-        onLoadedMetadata={(e) => {
-          if (e.currentTarget.paused) e.currentTarget.play().catch(() => {});
-        }}
         onContextMenu={(e) => e.preventDefault()}
         style={{
-          transform: 'translate3d(0, 0, 0)',
-          WebkitTransform: 'translate3d(0, 0, 0)',
-          backfaceVisibility: 'hidden',
-          WebkitBackfaceVisibility: 'hidden',
+          transform: 'translateZ(0)',
+          WebkitTransform: 'translateZ(0)',
           willChange: 'transform',
         }}
         className="absolute inset-0 w-full h-full object-cover z-0 opacity-100 pointer-events-none"
-      />
+      >
+        <source src={webmSrc} type="video/webm" />
+        <source src={mp4Src} type="video/mp4" />
+      </video>
 
       {/* Dark Cinematic Vignette & Gradient Overlay */}
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#121316] via-black/25 to-[#121316]/50 pointer-events-none" />
