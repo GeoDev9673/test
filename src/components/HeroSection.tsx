@@ -19,13 +19,59 @@ export const HeroSection: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Guarantee immediate instant autoplay on initial load
+  // Continuous smooth playback & scroll intersection observer
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.defaultMuted = true;
-      videoRef.current.muted = !isSoundOn;
-      videoRef.current.play().catch(() => {});
-    }
+    const v = videoRef.current;
+    if (!v) return;
+
+    const playVideo = () => {
+      if (v.paused) {
+        v.defaultMuted = true;
+        v.muted = !isSoundOn;
+        const p = v.play();
+        if (p !== undefined) {
+          p.catch(() => {});
+        }
+      }
+    };
+
+    // Immediate play
+    playVideo();
+
+    // Auto-resume if mobile browser tries to freeze video on scroll
+    const handlePause = () => {
+      if (document.visibilityState === 'visible' && !v.ended) {
+        playVideo();
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        playVideo();
+      }
+    };
+
+    // IntersectionObserver to keep video active and resume instantly on scroll
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            playVideo();
+          }
+        });
+      },
+      { threshold: 0.01 }
+    );
+
+    observer.observe(v);
+    v.addEventListener('pause', handlePause);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      v.removeEventListener('pause', handlePause);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      observer.disconnect();
+    };
   }, [isMobile, isSoundOn]);
 
   const toggleSound = (e: React.MouseEvent | React.TouchEvent) => {
@@ -48,9 +94,10 @@ export const HeroSection: React.FC = () => {
     <section
       id="hero"
       className="relative h-[100svh] min-h-[500px] w-full flex items-end justify-center overflow-hidden bg-[#121316] pb-20 sm:pb-24 md:pb-12 lg:pb-14"
+      style={{ contain: 'paint' }}
       aria-label="Hero"
     >
-      {/* Background Video with instant autoplay and hardware acceleration */}
+      {/* Background Video with continuous smooth autoplay and dedicated GPU layer */}
       <video
         ref={videoRef}
         src={currentVideoSrc}
@@ -62,20 +109,20 @@ export const HeroSection: React.FC = () => {
         controlsList="nodownload no-remote-playback"
         disablePictureInPicture
         onCanPlay={(e) => {
-          const v = e.currentTarget;
-          if (v.paused) v.play().catch(() => {});
+          if (e.currentTarget.paused) e.currentTarget.play().catch(() => {});
         }}
         onLoadedMetadata={(e) => {
-          const v = e.currentTarget;
-          if (v.paused) v.play().catch(() => {});
+          if (e.currentTarget.paused) e.currentTarget.play().catch(() => {});
         }}
         onContextMenu={(e) => e.preventDefault()}
         style={{
-          transform: 'translateZ(0)',
+          transform: 'translate3d(0, 0, 0)',
+          WebkitTransform: 'translate3d(0, 0, 0)',
           backfaceVisibility: 'hidden',
           WebkitBackfaceVisibility: 'hidden',
+          willChange: 'transform',
         }}
-        className="absolute inset-0 w-full h-full object-cover z-0 opacity-100"
+        className="absolute inset-0 w-full h-full object-cover z-0 opacity-100 pointer-events-none"
       />
 
       {/* Dark Cinematic Vignette & Gradient Overlay */}

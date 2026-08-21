@@ -30,13 +30,13 @@
   }
 
   html {
-    scroll-behavior: smooth;
     background-color: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
