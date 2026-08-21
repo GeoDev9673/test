@@ -61,6 +61,14 @@ export const HeroSection: React.FC = () => {
         preload="auto"
         controlsList="nodownload no-remote-playback"
         disablePictureInPicture
+        onCanPlay={(e) => {
+          const v = e.currentTarget;
+          if (v.paused) v.play().catch(() => {});
+        }}
+        onLoadedMetadata={(e) => {
+          const v = e.currentTarget;
+          if (v.paused) v.play().catch(() => {});
+        }}
         onContextMenu={(e) => e.preventDefault()}
         style={{
           transform: 'translateZ(0)',
