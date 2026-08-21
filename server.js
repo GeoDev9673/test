@@ -117,6 +117,24 @@ const sendBrevoWelcomeEmail = async (email) => {
   }
 };
 
+// Brevo Delete Contact helper
+const deleteBrevoContact = async (email) => {
+  const BREVO_API_KEY = process.env.BREVO_API_KEY || process.env.VITE_BREVO_API_KEY || '';
+  if (!BREVO_API_KEY || !email) return;
+
+  try {
+    const response = await fetch(`https://api.brevo.com/v3/contacts/${encodeURIComponent(email)}`, {
+      method: 'DELETE',
+      headers: {
+        'api-key': BREVO_API_KEY,
+      },
+    });
+    console.log(`[Brevo Delete Contact (${email}) Status]:`, response.status);
+  } catch (err) {
+    console.error('[Brevo Delete Contact Error]:', err);
+  }
+};
+
 // --- API ENDPOINTS ---
 
 // 1. Subscribe API
@@ -174,19 +192,24 @@ app.get('/api/subscribers', (req, res) => {
   });
 });
 
-// 2.1 Delete Subscriber (Admin)
+// 2.1 Delete Subscriber (Admin + Brevo Sync)
 app.delete('/api/subscribers/:id', (req, res) => {
   const { id } = req.params;
   let subscribers = getSubscribers();
-  const initialLength = subscribers.length;
-  subscribers = subscribers.filter((s) => s.id !== id && s.email !== id);
+  const target = subscribers.find((s) => s.id === id || s.email.toLowerCase() === id.toLowerCase());
 
-  if (subscribers.length === initialLength) {
+  if (!target) {
     return res.status(404).json({ success: false, message: 'Subscriber not found.' });
   }
 
+  // Remove from VPS storage
+  subscribers = subscribers.filter((s) => s.id !== target.id && s.email.toLowerCase() !== target.email.toLowerCase());
   saveSubscribers(subscribers);
-  return res.json({ success: true, message: 'Subscriber deleted successfully.' });
+
+  // Sync deletion with Brevo Contacts
+  deleteBrevoContact(target.email);
+
+  return res.json({ success: true, message: 'Subscriber deleted successfully from VPS and Brevo.' });
 });
 
 // 3. Export CSV endpoint
