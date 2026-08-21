@@ -25,6 +25,7 @@ export const HeroSection: React.FC = () => {
 
     v.defaultMuted = true;
     v.muted = !isSoundOn;
+    v.volume = 1.0;
 
     const playPromise = v.play();
     if (playPromise !== undefined) {
@@ -32,15 +33,24 @@ export const HeroSection: React.FC = () => {
     }
   }, [isMobile]);
 
+  useEffect(() => {
+    const v = videoRef.current;
+    if (v) {
+      v.muted = !isSoundOn;
+      v.volume = 1.0;
+    }
+  }, [isSoundOn]);
+
   const toggleSound = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const v = videoRef.current;
     if (v) {
-      const nextMuted = !v.muted;
-      v.muted = nextMuted;
-      setIsSoundOn(!nextMuted);
-      if (!nextMuted && v.paused) {
+      const nextSound = !isSoundOn;
+      setIsSoundOn(nextSound);
+      v.muted = !nextSound;
+      v.volume = 1.0;
+      if (nextSound && v.paused) {
         v.play().catch(() => {});
       }
     }
@@ -62,7 +72,7 @@ export const HeroSection: React.FC = () => {
         src={currentVideoSrc}
         autoPlay
         loop
-        muted
+        muted={!isSoundOn}
         playsInline
         preload="auto"
         controlsList="nodownload no-remote-playback"
