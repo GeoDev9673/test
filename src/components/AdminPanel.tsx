@@ -11,6 +11,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   const [daysRange, setDaysRange] = useState<number>(14);
   const [data, setData] = useState<AnalyticsSummary | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedPoint, setSelectedPoint] = useState<{
+    x: number;
+    y: number;
+    date: string;
+    fullDate: string;
+    visits: number;
+    uniques: number;
+  } | null>(null);
   const [hoveredPoint, setHoveredPoint] = useState<{
     x: number;
     y: number;
@@ -76,11 +84,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
     }
   };
 
-  // SVG Chart Dimensions
+  // SVG Chart Dimensions (Taller & more expressive on mobile & desktop)
   const chartWidth = 840;
-  const chartHeight = 240;
-  const paddingX = 35;
-  const paddingY = 25;
+  const chartHeight = 340;
+  const paddingX = 45;
+  const paddingY = 40;
 
   const chartData = data?.chartData || [];
   const maxVisits = Math.max(...chartData.map((d) => d.visits), 4);
@@ -107,7 +115,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
       } Z`
     : '';
 
-  const activePoint = hoveredPoint || (points.length > 0 ? points[points.length - 1] : null);
+  const activePoint = selectedPoint || hoveredPoint || (points.length > 0 ? points[points.length - 1] : null);
 
   return (
     <div className="min-h-screen w-full bg-[#121316] text-[#F2EEE8] selection:bg-[#FF2D85]/30">
@@ -334,15 +342,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   {areaPath && <path d={areaPath} fill="url(#paralifeGradient)" />}
 
                   {/* Active Point Vertical Guideline */}
-                  {hoveredPoint && (
+                  {activePoint && (
                     <line
-                      x1={hoveredPoint.x}
-                      y1={hoveredPoint.y}
-                      x2={hoveredPoint.x}
+                      x1={activePoint.x}
+                      y1={activePoint.y}
+                      x2={activePoint.x}
                       y2={chartHeight - paddingY}
                       stroke="#FF2D85"
-                      strokeWidth="1"
-                      strokeDasharray="3 3"
+                      strokeWidth="1.5"
+                      strokeDasharray="4 4"
+                      opacity="0.8"
                     />
                   )}
 
@@ -352,57 +361,63 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                       d={linePath}
                       fill="none"
                       stroke="#FF2D85"
-                      strokeWidth="2"
+                      strokeWidth="2.5"
                       strokeLinecap="round"
                     />
                   )}
 
-                  {/* Interactive Nodes */}
+                  {/* Interactive Touch Nodes */}
                   {points.map((p, idx) => {
-                    const isHovered = hoveredPoint?.x === p.x;
+                    const isSelected = activePoint?.x === p.x;
                     return (
-                      <g key={idx}>
+                      <g key={idx} className="cursor-pointer">
+                        {/* Large invisible touch hit area (easy finger tap on phone) */}
                         <circle
                           cx={p.x}
                           cy={p.y}
-                          r={isHovered ? '6' : '4'}
-                          fill={isHovered ? '#FF2D85' : '#121316'}
-                          stroke="#FF2D85"
-                          strokeWidth="2"
-                          className="cursor-pointer transition-all duration-150"
-                          onMouseEnter={() =>
-                            setHoveredPoint({
-                              x: p.x,
-                              y: p.y,
-                              date: p.date,
-                              fullDate: p.fullDate,
-                              visits: p.visits,
-                              uniques: p.uniques,
-                            })
-                          }
-                          onTouchStart={() =>
-                            setHoveredPoint({
-                              x: p.x,
-                              y: p.y,
-                              date: p.date,
-                              fullDate: p.fullDate,
-                              visits: p.visits,
-                              uniques: p.uniques,
-                            })
-                          }
+                          r="26"
+                          fill="transparent"
+                          onClick={() => setSelectedPoint(p)}
+                          onTouchStart={() => setSelectedPoint(p)}
+                          onMouseEnter={() => setHoveredPoint(p)}
                           onMouseLeave={() => setHoveredPoint(null)}
                         />
+
+                        {/* Outer Glowing Ring when Selected / Tapped */}
+                        {isSelected && (
+                          <circle
+                            cx={p.x}
+                            cy={p.y}
+                            r="11"
+                            fill="#FF2D85"
+                            fillOpacity="0.25"
+                            stroke="#FF2D85"
+                            strokeWidth="2"
+                          />
+                        )}
+
+                        {/* Visible Node Circle */}
+                        <circle
+                          cx={p.x}
+                          cy={p.y}
+                          r={isSelected ? '6' : '4.5'}
+                          fill={isSelected ? '#FF2D85' : '#121316'}
+                          stroke={isSelected ? '#FFFFFF' : '#FF2D85'}
+                          strokeWidth="2"
+                          className="transition-all duration-150 pointer-events-none"
+                        />
+
                         {/* Dates on bottom axis */}
                         {(idx === 0 ||
                           idx === Math.floor(points.length / 2) ||
                           idx === points.length - 1) && (
                           <text
                             x={p.x}
-                            y={chartHeight - 4}
-                            fill="rgba(242, 238, 232, 0.45)"
-                            fontSize="10"
+                            y={chartHeight - 10}
+                            fill="rgba(242, 238, 232, 0.5)"
+                            fontSize="11"
                             textAnchor="middle"
-                            className="uppercase tracking-wider"
+                            className="uppercase tracking-wider font-mono pointer-events-none"
                           >
                             {p.date}
                           </text>
@@ -410,6 +425,48 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                       </g>
                     );
                   })}
+
+                  {/* Direct Floating Tooltip Badge Over Selected Node */}
+                  {activePoint && (
+                    <g
+                      className="transition-all duration-150 pointer-events-none"
+                      transform={`translate(${Math.max(15, Math.min(chartWidth - 135, activePoint.x - 60))}, ${Math.max(
+                        10,
+                        activePoint.y - 60
+                      )})`}
+                    >
+                      <rect
+                        width="120"
+                        height="44"
+                        rx="6"
+                        fill="#181920"
+                        stroke="#FF2D85"
+                        strokeWidth="1.5"
+                        filter="drop-shadow(0 6px 12px rgba(255, 45, 133, 0.35))"
+                      />
+                      <text
+                        x="60"
+                        y="20"
+                        fill="#F2EEE8"
+                        fontSize="12"
+                        fontWeight="bold"
+                        textAnchor="middle"
+                        letterSpacing="0.04em"
+                      >
+                        {activePoint.visits} {activePoint.visits === 1 ? 'ДЕВАЙС' : 'ДЕВАЙСОВ'}
+                      </text>
+                      <text
+                        x="60"
+                        y="35"
+                        fill="rgba(242, 238, 232, 0.6)"
+                        fontSize="10"
+                        textAnchor="middle"
+                        className="font-mono uppercase tracking-wider"
+                      >
+                        {activePoint.date}
+                      </text>
+                    </g>
+                  )}
                 </svg>
               </div>
             </div>
