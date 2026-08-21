@@ -187,8 +187,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
             >
               <span>+subscribers</span>
               {data && data.totalSubscribers > 0 && (
-                <span className="min-w-[19px] h-[19px] px-1.5 rounded-full bg-[#FF2D85] text-white text-[10px] font-bold font-mono inline-flex items-center justify-center text-center leading-none shadow-sm shadow-[#FF2D85]/30">
-                  {data.totalSubscribers}
+                <span className="w-[19px] h-[19px] min-w-[19px] rounded-full bg-[#FF2D85] text-white text-[11px] font-bold tracking-normal leading-none inline-flex items-center justify-center p-0 text-center select-none shadow-sm shadow-[#FF2D85]/30">
+                  <span>{data.totalSubscribers}</span>
                 </span>
               )}
             </button>
