@@ -416,8 +416,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 </h3>
               </div>
               <button
+                type="button"
                 onClick={handleExportCSV}
-                className="py-2.5 px-5 sm:px-6 text-[12px] tracking-[0.1em] uppercase bg-[#FF2D85] hover:bg-[#ff1275] active:bg-[#ff1275] text-white font-medium transition-colors cursor-pointer min-h-[44px] flex items-center justify-center self-start sm:self-auto"
+                disabled={!data || data.subscribers.length === 0}
+                className={`py-2.5 px-5 sm:px-6 text-[12px] tracking-[0.1em] uppercase font-medium transition-all duration-150 min-h-[44px] flex items-center justify-center self-start sm:self-auto ${
+                  data && data.subscribers.length > 0
+                    ? 'bg-[#FF2D85] hover:bg-[#ff1275] active:bg-[#ff1275] text-white cursor-pointer shadow-lg shadow-[#FF2D85]/20'
+                    : 'bg-[#1c1d24] text-[#F2EEE8]/30 border border-[#F2EEE8]/10 cursor-not-allowed opacity-60'
+                }`}
               >
                 +export csv
               </button>
