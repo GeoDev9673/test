@@ -80,7 +80,6 @@ export const HeroSection: React.FC = () => {
         muted
         playsInline
         preload="auto"
-        poster={isMobile ? HERO_DATA.posterMobileImage : HERO_DATA.posterImage}
         controlsList="nodownload no-remote-playback"
         disablePictureInPicture
         onContextMenu={(e) => e.preventDefault()}
