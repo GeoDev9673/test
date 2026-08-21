@@ -168,56 +168,54 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
       {/* Main Container */}
       <main className="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-12 pt-20 sm:pt-28 md:pt-32 pb-16 sm:pb-20 flex flex-col space-y-8 sm:space-y-12">
         
-        {/* Navigation Tabs & Mobile Filter Switcher */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#F2EEE8]/10 pb-3 sm:pb-4 gap-4">
-          <div className="flex items-center space-x-6 sm:space-x-10">
-            <button
-              onClick={() => setActiveTab('overview')}
-              className={`text-[12px] sm:text-[13px] tracking-[0.12em] uppercase transition-colors cursor-pointer font-semibold py-1 border-b-2 ${
-                activeTab === 'overview' ? 'text-[#FF2D85] border-[#FF2D85]' : 'text-[#F2EEE8]/52 hover:text-[#F2EEE8] border-transparent'
-              }`}
-            >
-              +analytics
-            </button>
-            
-            <button
-              onClick={() => setActiveTab('subscribers')}
-              className={`text-[12px] sm:text-[13px] tracking-[0.12em] uppercase transition-colors cursor-pointer font-semibold py-1 border-b-2 flex items-center space-x-2 ${
-                activeTab === 'subscribers' ? 'text-[#FF2D85] border-[#FF2D85]' : 'text-[#F2EEE8]/52 hover:text-[#F2EEE8] border-transparent'
-              }`}
-            >
-              <span>+subscribers</span>
-              {data && data.totalSubscribers > 0 && (
-                <span className="text-[10px] bg-[#FF2D85] text-white px-1.5 py-0.2 rounded-full font-mono font-bold">
-                  {data.totalSubscribers}
-                </span>
-              )}
-            </button>
-          </div>
-
-          {/* Mobile Period Selector */}
-          <div className="flex sm:hidden items-center justify-between bg-[#16171d] p-1 rounded-sm border border-[#F2EEE8]/10 w-full">
-            <span className="text-[10px] uppercase tracking-wider text-[#F2EEE8]/40 px-2">Период:</span>
-            <div className="flex items-center space-x-1">
-              {[7, 14, 30].map((days) => (
-                <button
-                  key={days}
-                  onClick={() => setDaysRange(days)}
-                  className={`py-1 px-3 rounded-xs text-[11px] font-medium tracking-wider uppercase transition-all ${
-                    daysRange === days ? 'bg-[#FF2D85] text-white font-bold' : 'text-[#F2EEE8]/60'
-                  }`}
-                >
-                  {days}d
-                </button>
-              ))}
-            </div>
-          </div>
+        {/* Navigation Tabs */}
+        <div className="flex items-center space-x-6 sm:space-x-10 border-b border-[#F2EEE8]/10 pb-3 sm:pb-4">
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`text-[12px] sm:text-[13px] tracking-[0.12em] uppercase transition-colors cursor-pointer font-semibold py-1 border-b-2 ${
+              activeTab === 'overview' ? 'text-[#FF2D85] border-[#FF2D85]' : 'text-[#F2EEE8]/52 hover:text-[#F2EEE8] border-transparent'
+            }`}
+          >
+            +analytics
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('subscribers')}
+            className={`text-[12px] sm:text-[13px] tracking-[0.12em] uppercase transition-colors cursor-pointer font-semibold py-1 border-b-2 flex items-center space-x-2 ${
+              activeTab === 'subscribers' ? 'text-[#FF2D85] border-[#FF2D85]' : 'text-[#F2EEE8]/52 hover:text-[#F2EEE8] border-transparent'
+            }`}
+          >
+            <span>+subscribers</span>
+            {data && data.totalSubscribers > 0 && (
+              <span className="text-[10px] bg-[#FF2D85] text-white px-1.5 py-0.2 rounded-full font-mono font-bold">
+                {data.totalSubscribers}
+              </span>
+            )}
+          </button>
         </div>
 
         {/* TAB 1: OVERVIEW & CHARTS */}
         {activeTab === 'overview' && (
-          <div className="flex flex-col space-y-8 sm:space-y-14 animate-fade-in">
+          <div className="flex flex-col space-y-6 sm:space-y-12 animate-fade-in">
             
+            {/* Mobile Period Selector (Only in Analytics) */}
+            <div className="flex sm:hidden items-center justify-between bg-[#16171d] p-1.5 rounded-sm border border-[#F2EEE8]/10 w-full">
+              <span className="text-[10px] uppercase tracking-wider text-[#F2EEE8]/50 px-2 font-medium">Период:</span>
+              <div className="flex items-center space-x-1">
+                {[7, 14, 30].map((days) => (
+                  <button
+                    key={days}
+                    onClick={() => setDaysRange(days)}
+                    className={`py-1 px-3 rounded-xs text-[11px] font-semibold tracking-wider uppercase transition-all ${
+                      daysRange === days ? 'bg-[#FF2D85] text-white' : 'text-[#F2EEE8]/60 hover:text-white'
+                    }`}
+                  >
+                    {days}d
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Metric Grid (Cards on Mobile, 4-cols on Desktop) */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 md:gap-8">
               
@@ -476,19 +474,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
         {/* TAB 2: SUBSCRIBERS TABLE */}
         {activeTab === 'subscribers' && (
-          <div className="flex flex-col space-y-6 sm:space-y-8 animate-fade-in">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#F2EEE8]/10 pb-4 sm:pb-6 gap-4">
+          <div className="flex flex-col space-y-4 sm:space-y-8 animate-fade-in">
+            <div className="flex items-center justify-between border-b border-[#F2EEE8]/10 pb-3 sm:pb-5 gap-3">
               <div>
-                <span className="section-label text-[#F2EEE8]/52">+database</span>
-                <h3 className="text-[20px] sm:text-[24px] md:text-[28px] text-[#F2EEE8] font-normal tracking-tight mt-1">
-                  Verified Signal Subscribers
+                <span className="section-label text-[#F2EEE8]/52 text-[10px] sm:text-[11px]">+database</span>
+                <h3 className="text-[17px] sm:text-[24px] md:text-[28px] text-[#F2EEE8] font-normal tracking-tight mt-0.5">
+                  Signal Subscribers
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={handleExportCSV}
                 disabled={!data || data.subscribers.length === 0}
-                className={`py-2.5 px-5 sm:px-6 text-[12px] tracking-[0.1em] uppercase font-medium transition-all duration-150 min-h-[44px] flex items-center justify-center self-start sm:self-auto ${
+                className={`py-2 px-3.5 sm:px-6 text-[11px] sm:text-[12px] tracking-[0.08em] sm:tracking-[0.1em] uppercase font-medium transition-all duration-150 min-h-[36px] sm:min-h-[44px] flex items-center justify-center whitespace-nowrap rounded-xs ${
                   data && data.subscribers.length > 0
                     ? 'bg-[#FF2D85] hover:bg-[#ff1275] active:bg-[#ff1275] text-white cursor-pointer shadow-lg shadow-[#FF2D85]/20'
                     : 'bg-[#1c1d24] text-[#F2EEE8]/30 border border-[#F2EEE8]/10 cursor-not-allowed opacity-60'
